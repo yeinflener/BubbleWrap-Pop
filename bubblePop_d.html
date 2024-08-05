@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="../image/favicon_10.ico">
+  <title>Bubble Wrap Pop Game</title>
+</head>
+<style>
+  body {
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: rgba(228, 236, 234, 0.788);
+  }
+
+  #title {
+    color:rgb(87, 84, 84);
+    font-size: 3rem;
+  }
+
+  input {
+    width: 30%;
+    padding: 10px;
+  }
+
+  #cont {
+    max-width: 40%; 
+
+  }
+
+  #resetButton {
+    display: none;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    width: 200px;
+    background-color: orangered;
+    color: white;
+    border: none;
+    font-size: 1.2rem;
+    border-radius: 8px;
+  }
+
+  #submitButton {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    width: 150px;
+    background-color: rgb(44, 184, 44);
+    color: white;
+    border: none;
+    font-size: 1.2rem;
+    border-radius: 8px;
+  }
+  #submitButton:active {
+    color: yellow;
+    transform: scale(1.05);
+  }
+  /* styling drop down box */
+  #theme {
+    padding: 8px;
+    border: 1px solid rgb(206, 209, 206);
+    background-color: rgb(247, 236, 226);
+    font-size: large;
+  }
+  #seasonText {
+    font-size: 1.5rem;
+    color: rgb(114, 111, 111);
+  }
+  #bubbleText {
+    font-size: 1.5rem;
+    color: rgb(114, 111, 111);   
+  }
+  #winImage {
+    display: none;
+  }
+  p {
+    font-size: 1.8rem;
+    color: #fbff00;
+    font-weight: 900;
+  }
+
+  @media screen and (max-width: 768px){
+    #cont {
+      max-width: 80%;
+      }
+    input {
+      width: 70%;
+      }
+    #title {
+      font-size: 2rem;
+    }
+  }
+</style>
+<script>
+  let i = 0;
+  //let count = 10;
+  //user input on number of bubble
+  let userCount = 0;
+  //variable to count number of bubbles popped by user
+  let winningCount = 0;
+  //create a div for winning message
+  let messageToUser = document.createElement("div");
+  
+  //function for pop bubbles and play sound
+  function popBubble(id) {
+    console.log("i: " + i);
+    console.log("userCount: " + userCount);
+    //Update image to popped bubbles
+    document.getElementById(id).src = "popped.png";
+    //play sound
+    var audio = new Audio('popSound.wav');
+    //lower volumn of sound
+    audio.volume = .1;
+    audio.play();
+    //document.getElementById(id).removeEventListener("click", popBubble);
+    //add 1 to winningCount each time user pops the bubbles
+    winningCount++;
+    console.log("winningCount: " + winningCount);
+    //call win function to see if all bubbles are popped
+    win(winningCount);
+    document.getElementById(id).onclick = "";    
+    }
+
+  //function for user to input number of bubbles to start game
+  function startButton() { 
+    userCount = Number(document.getElementById("userCount").value);
+    if (!userCount || userCount <= 0) {
+        alert("Please input valid number");
+        document.getElementById("userCount").value = "";
+    } else {
+      //call setup function to populate bubbles
+    setup();
+    document.getElementById("resetButton").style.display = "block";
+    document.getElementById("userCount").value = "";
+    document.getElementById("userCount").style.display = "none";
+    document.getElementById("submitButton").style.display = "none";
+    document.getElementById("bubbleText").style.display = "none";
+    }
+  }  
+  //when user input bubble count, function is called (at startButton function) to populate the bubbles on the page and give each a unique id using the counter
+  function setup() {  
+    for(i = 0; i < userCount; i++){
+      document.getElementById("bubbleWrapCont").innerHTML += "<img src='unpopped.png' id='unpopped " + i + "' onClick = 'popBubble(this.id)'>";
+      //document.getElementById("bubbleWrapCont").innerHTML += "<img src='unpopped.png' id='unpopped " + i + "' onClick = 'popBubble(this.id)'>";
+      console.log("Populated " + i + " bubble");
+    }
+  }
+  //function to have a "win" event when all bubbles on the scrren are popped
+  function win(winningCount) {
+    console.log("function i: " + i);
+    console.log("function userCount: " + userCount);
+    console.log("function winningCount: " + winningCount);
+    if (winningCount == userCount) {
+     console.log("You popped all the bubbles!");
+     //document.getElementById('winEvent').innerHTML = url("trophy1.gif");
+     //document.getElementById("img").src = "trophy1.gif";
+     messageToUser.innerHTML = "<p>You popped all " + winningCount + " bubbles!</p>";
+     document.getElementById("message").appendChild(messageToUser);
+     document.getElementById("winImage").style.display = "block";
+     document.getElementById("bubbleWrapCont").style.display = "none";
+     return;
+     }    
+  }
+  //initialize/reset for new game
+  function reset(){
+    document.getElementById("bubbleWrapCont").innerHTML = "";
+    document.getElementById("resetButton").style.display = "none";
+    document.getElementById("userCount").style.display = "block";
+    document.getElementById("submitButton").style.display = "block";
+    document.body.style.background = "";
+    document.getElementById("title").style.color = "rgb(87, 84, 84)";
+    document.getElementById("seasonText").style.color = "rgb(87, 84, 84)";
+    document.getElementById("bubbleText").style.display = "block";
+    document.getElementById("bubbleText").style.color = "rgb(87, 84, 84)";
+    document.getElementById("theme").value = "None Selected";
+    document.getElementById("winImage").style.display = "none";
+    document.getElementById("message").innerHTML = "";
+    document.getElementById("bubbleWrapCont").style.display = "block";
+    winningCount = 0;    
+   }
+
+    //function for page theme selection using switch statement
+  function themeChoice() {
+    //alert(document.getElementById("theme").value);
+    let themeSelection = document.getElementById("theme").value;
+    switch(themeSelection) {
+        case "spring":
+          document.body.style.backgroundImage = "url('spring.jpg')";
+          document.getElementById("title").style.color = "white";
+          document.getElementById("seasonText").style.color = "white";
+          document.getElementById("bubbleText").style.color = "white";
+          break;
+        case "summer":
+          document.body.style.backgroundImage = "url('summer.jpg')";
+          document.getElementById("title").style.color = "white";
+          document.getElementById("seasonText").style.color = "white";
+          document.getElementById("bubbleText").style.color = "white";
+          break;
+        case "fall":
+          document.body.style.backgroundImage = "url('fall.jpg')";
+          document.getElementById("title").style.color = "white";
+          document.getElementById("seasonText").style.color = "white";
+          document.getElementById("bubbleText").style.color = "white";
+          break;
+        case "winter":
+          document.body.style.backgroundImage = "url('winter.jpg')";
+          document.getElementById("title").style.color = "blue";
+          document.getElementById("seasonText").style.color = "rgb(87, 84, 84)";
+          document.getElementById("bubbleText").style.color = "rgb(87, 84, 84)";
+          break;
+        default:
+          document.body.style.backgroundColor = "rgb(208, 238, 223)";      
+          }
+   }
+   //function for addEventListener on page theme selection
+   function setupFirst() {
+    document.getElementById("theme").addEventListener("change", themeChoice);
+   }  
+
+</script>
+
+<body onload="setupFirst()">
+    <!--  onload="setupFirst()"-->
+  <h1 id="title">Bubble Wrap Pop!</h1>
+  <text id="seasonText"><b>Select a Theme</b></text>
+    <select name="theme" id="theme">
+      <!--  disabled onchange="themeChoice"-->
+    <<option value="None Selected" selected="selected">What's your favorite season?</option>
+    <option value="spring">Spring</option>
+    <option value="summer">Summer</option>
+    <option value="fall">Fall</option>
+    <option value="winter">Winter</option>
+  </select>
+  <br>
+    <text id="bubbleText"><b>Enter number of bubbles</b></text>
+    <input type="number" id="userCount" min="0">
+    <button id="submitButton" onclick="startButton()">Submit</button>
+ 
+  <div id="cont">
+    <div id="bubbleWrapCont"></div>
+  </div>
+  
+  <div id="message"></div>
+  <div id="winEvent" align="center">
+      <img src="trophy1.gif" width="300" id="winImage">
+  </div>
+  
+  <button id="resetButton" onclick="reset()">Reset</button>
+
+</body>
+</html>
